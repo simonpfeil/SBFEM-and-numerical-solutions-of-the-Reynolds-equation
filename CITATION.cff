@@ -1,0 +1,18 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Algorithms for SBFEM and numerical solutions of the Reynolds equation
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Simon
+    family-names: Pfeil
+    email: simon.pfeil@ovgu.de
+    affiliation: OvGU Magdeburg
+    orcid: 'https://orcid.org/0000-0002-7656-6727'
+repository-code: >-
+  https://github.com/simonpfeil/Algorithms-for-SBFEM-and-numerical-solutions-of-the-Reynolds-equation.git
