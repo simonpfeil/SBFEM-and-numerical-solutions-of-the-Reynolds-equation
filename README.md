@@ -1,1 +1,1 @@
-# simulating-hydrodynamic-bearings-with-the-scaled-boundary-finite-element-method
+# algorithms-for-sbfem-and-numerical-solutions-of-the-reynolds-equation
