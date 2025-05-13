@@ -1,1 +1,1 @@
-# algorithms-for-sbfem-and-numerical-solutions-of-the-reynolds-equation
+# Algorithms-for-SBFEM-and-numerical-solutions-of-the-Reynolds-equation
