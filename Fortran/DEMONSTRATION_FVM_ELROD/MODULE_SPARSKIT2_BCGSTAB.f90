@@ -3,7 +3,7 @@
 ! under
 !
 !  Yousef Saad: SPARSKIT2. University of Minnesota, Department of Computer Science and Engineering, 
-!  200 Union Street S.E., Minneapolis, MN 55455 USA, [saad -at -umn- dot- -edu-],
+!  200 Union Street S.E., Minneapolis, MN 55455 USA, [saad -at- umn -dot- edu],
 !  https://www-users.cse.umn.edu/~saad/software/SPARSKIT/
 !
 ! Please download these subprograms from there and place them in the folder "./sparskit2_bcgstab" 
