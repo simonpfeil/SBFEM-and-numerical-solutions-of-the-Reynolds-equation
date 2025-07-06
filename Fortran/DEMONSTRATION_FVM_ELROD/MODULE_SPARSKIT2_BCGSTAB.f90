@@ -1,8 +1,13 @@
-! This module contains a selection of SPARSKIT2 routines for solving equation systems by means of a 
-! BCGSTAB algorithm; the folder sk2 contains the source files. SPARSKIT2 was created by Yousef Saad, 
-! University of Minnesota, Department of Computer Science and Engineering, 200 Union Street S.E., 
-! Minneapolis, MN 55455 USA, [saad -at -umn- dot- -edu-].
-! https://www-users.cse.umn.edu/~saad/software/SPARSKIT/
+! This module relies on a selection of algorithms for solving equation systems by means of
+! BCGSTAB. The files listed under "CONTAINS" correspond to particular subprograms available
+! under
+!
+!  Yousef Saad: SPARSKIT2. University of Minnesota, Department of Computer Science and Engineering, 
+!  200 Union Street S.E., Minneapolis, MN 55455 USA, [saad -at -umn- dot- -edu-],
+!  https://www-users.cse.umn.edu/~saad/software/SPARSKIT/
+!
+! Please download these subprograms from there and place them in the folder "./sparskit2_bcgstab" 
+! using the corresponding file names.
 
 MODULE MODULE_SPARSKIT2_BCGSTAB
 
