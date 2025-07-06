@@ -27,7 +27,7 @@
 !   Since this renders the problem nonlinear, the program FVM_ELROD may internally perform multiple 
 !   iterations. To handle the transient cavitation term in the Reynolds equation, the program needs to 
 !   transfer data to itself across time steps, for which it uses the input/output variable pts_vec.
-!	Optionally, the cavitation model can be bypassed, meaning that Guembel conditions are assumed instead.
+!   Optionally, the cavitation model can be bypassed, meaning that Guembel conditions are assumed instead.
 !
 ! - The input and output variables of FVM_ELROD will all be clarified throughout the script at hand.
 !
