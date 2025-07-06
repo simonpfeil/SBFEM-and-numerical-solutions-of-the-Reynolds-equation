@@ -50,20 +50,21 @@
 !   Bearings with the Scaled Boundary Finite Element Method" by Simon Pfeil, but this thesis isn't 
 !   publically available yet
 !
-! - FVM_ELROD uses BiCGStab to solve the unsymmetric equation system. BiCGStab relies on the attached 
-!   module 'MODULE_SPARSKIT2_BCGSTAB.f90' and the files contained in the folder 'sk2' (see also [1]).
-!   Under Guembel conditions, the equation system is symmetric, so ICCG is used for its solution instead. 
-!   ICCG relies on the attached files 'SOLVER_IC_CG_MKL.f90', 'MODULE_JPICC.f90', and those contained in 
-!   the folder 'jpicc' (see also [2]). Moreover, the CG iteration involved in ICCG uses BLAS routines, 
-!   which are available via Intel's Math Kernel Library. ICCG can be replaced by BiCGStab, but not the 
-!   other way round.
+! - FVM_ELROD uses BiCGStab [1] to solve the unsymmetric equation system. Under Guembel conditions, the 
+!   equation system is symmetric, so ICCG is used for its solution instead. The ICCG subprogram is given 
+!   by the file SOLVER_IC_CG_MKL.f90 (provided by Steffen Nitzschke, OvGU Magdeburg), which relies on BLAS 
+!   routines (available via, e.g., Intel's Math Kernel Library) as well as on an IC factorization [2].
+!   The subprograms [1] and [2] can be obtained from 
 !   [1] Yousef Saad: SPARSKIT2. University of Minnesota, Department of Computer Science and Engineering, 
-!       200 Union Street S.E., Minneapolis, MN 55455 USA, [saad -at -umn- dot- -edu-]. 
+!       200 Union Street S.E., Minneapolis, MN 55455 USA, [saad -at- umn -dot- edu],
 !       https://www-users.cse.umn.edu/~saad/software/SPARSKIT/
 !   [2] Mark T. Jones, Paul E. Plassmann: Algorithm 740: Fortran subroutines to compute improved 
 !       incomplete Cholesky factorizations. ACM Transactions on Mathematical Software, vol. 21,
-!       no. 1, March 1995, p. 18-19. Association for Computing Machinery, New York, NY, USA, 0098-3500.
+!       no. 1, March 1995, p. 18-19. Association for Computing Machinery, New York, NY, USA, 0098-3500,
 !       https://doi.org/10.1145/200979.200986
+!	Please follow the intructions given by the comments in the files MODULE_SPARSKIT2_BCGSTAB.f90 and
+!   MODULE_JPICC.f90. Note that it is also possible to modify the FVM algorithm to always use BiCGStab
+!   (as opposed to switching between BiCGStab and ICCG depending on the cavitation assumptions).
 !
 ! - The node numbering scheme is illustrated below. Note that the nodes are counted without including the
 !   periodic nodes at X=2pi. The first note in the circumferential direction is located at X=0 and the last
