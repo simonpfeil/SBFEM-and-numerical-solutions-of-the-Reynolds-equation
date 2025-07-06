@@ -6,8 +6,8 @@
 !  200 Union Street S.E., Minneapolis, MN 55455 USA, [saad -at- umn -dot- edu],
 !  https://www-users.cse.umn.edu/~saad/software/SPARSKIT/
 !
-! Please download these subprograms from there and place them in the folder "./sparskit2_bcgstab" 
-! using the corresponding file names.
+! Please download the subprograms from there and place them in the folder "./sparskit2_bcgstab" 
+! using these file names.
 
 MODULE MODULE_SPARSKIT2_BCGSTAB
 
