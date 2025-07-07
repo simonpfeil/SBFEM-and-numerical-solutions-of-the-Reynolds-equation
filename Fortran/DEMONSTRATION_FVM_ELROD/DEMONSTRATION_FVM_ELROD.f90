@@ -106,8 +106,8 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   
   ! input variables for FVM_ELROD: bearing properties, kinematic variables, discretization, ...
   REAL(KIND=8) 									:: d_b, l_b
-  INTEGER										:: n_x, n_y, grooves, iter_max_solver, quasistatic
-  INTEGER										:: iter_max, symBC, guembel
+  INTEGER                                                                       :: n_x, n_y, grooves, iter_max_solver, quasistatic
+  INTEGER                                                                       :: iter_max, symBC, guembel
   REAL(KIND=8) 									:: c, X_os, L_X_os, l_y_os, p_os, t, pm, tol
   REAL(KIND=8) 									:: angle_shell, omega_shell, omega_shaft
   REAL(KIND=8) 									:: dis_h_shell, dis_v_shell, vel_h_shell
