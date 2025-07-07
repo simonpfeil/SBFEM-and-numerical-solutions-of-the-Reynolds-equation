@@ -43,8 +43,8 @@ SUBROUTINE FVM_ELROD(d_b, l_b, c, grooves, X_os, L_X_os, l_y_os, p_os, ac_vec, t
   
   ! input variables
   REAL(KIND=8),INTENT(IN)                               :: d_b, l_b
-  INTEGER,INTENT(IN)									:: n_x, n_y, grooves, iter_max_solver, quasistatic
-  INTEGER,INTENT(IN)									:: iter_max, symBC, guembel
+  INTEGER,INTENT(IN)                                    :: n_x, n_y, grooves, iter_max_solver, quasistatic
+  INTEGER,INTENT(IN)                                    :: iter_max, symBC, guembel
   REAL(KIND=8),INTENT(IN)                               :: c, X_os, L_X_os, l_y_os, p_os, t, pm, tol
   REAL(KIND=8),INTENT(IN)                               :: angle_shell, omega_shell, omega_shaft
   REAL(KIND=8),INTENT(IN)                               :: dis_h_shell, dis_v_shell, vel_h_shell
@@ -53,125 +53,125 @@ SUBROUTINE FVM_ELROD(d_b, l_b, c, grooves, X_os, L_X_os, l_y_os, p_os, ac_vec, t
   REAL(KIND=8),INTENT(IN)                               :: tilt_h_shell, tilt_v_shell, tilt_dot_h_shell
   REAL(KIND=8),INTENT(IN)                               :: tilt_dot_v_shell, tilt_h_shaft, tilt_v_shaft
   REAL(KIND=8),INTENT(IN)                               :: tilt_dot_h_shaft, tilt_dot_v_shaft
-  REAL(KIND=8),DIMENSION(n_x*n_y),INTENT(IN)			:: mu_vec, ac_vec
+  REAL(KIND=8),DIMENSION(n_x*n_y),INTENT(IN)            :: mu_vec, ac_vec
   
   ! output variables
-  INTEGER,INTENT(OUT)									:: convergent, iter, iter_sol
-  REAL(KIND=8),INTENT(OUT) 								:: F_h, F_v, M_h, M_v, M_fr, V_oil, V_dot_bb, p_ref
-  REAL(KIND=8),DIMENSION(n_x,n_y),INTENT(OUT)			:: Pi_mat
+  INTEGER,INTENT(OUT)                                   :: convergent, iter, iter_sol
+  REAL(KIND=8),INTENT(OUT)                              :: F_h, F_v, M_h, M_v, M_fr, V_oil, V_dot_bb, p_ref
+  REAL(KIND=8),DIMENSION(n_x,n_y),INTENT(OUT)           :: Pi_mat
   
   ! input/output variables
-  REAL(KIND=8),DIMENSION(n_x*n_y+1),INTENT(INOUT)		:: pts_vec
+  REAL(KIND=8),DIMENSION(n_x*n_y+1),INTENT(INOUT)       :: pts_vec
   
   ! solver-specific local variables
-  INTEGER                                       		:: error, dof, lfil, nnz_ilu, lws, liws, iter_out
-  INTEGER,DIMENSION(16)									:: ipar_vec
-  INTEGER,DIMENSION(:),ALLOCATABLE              		:: rowIndex_vec, columns_vec
-  INTEGER,DIMENSION(:),ALLOCATABLE              		:: j_lu_vec, j_u_vec, iws_vec
+  INTEGER                                               :: error, dof, lfil, nnz_ilu, lws, liws, iter_out
+  INTEGER,DIMENSION(16)                                 :: ipar_vec
+  INTEGER,DIMENSION(:),ALLOCATABLE                      :: rowIndex_vec, columns_vec
+  INTEGER,DIMENSION(:),ALLOCATABLE                      :: j_lu_vec, j_u_vec, iws_vec
   REAL(KIND=8)                                          :: tol_fil
-  REAL(KIND=8),DIMENSION(16)							:: fpar_vec
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE         		:: values_vec, R_vec, Pi_dof_vec
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE					:: initial_guess_vec, a_lu_vec, ws_vec
+  REAL(KIND=8),DIMENSION(16)                            :: fpar_vec
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE                 :: values_vec, R_vec, Pi_dof_vec
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE                 :: initial_guess_vec, a_lu_vec, ws_vec
   
   ! other local variables
-  INTEGER												:: n, dof_y, j_start, i, j, k, l, n_os_x, n_i
-  INTEGER												:: start_os, longgroove, end_os, n_os_y, n_nz
-  INTEGER												:: restore13, g_os, s1, s2
-  INTEGER,DIMENSION(grooves)							:: start_os_vec, end_os_vec
-  INTEGER,DIMENSION(n_x*n_y)							:: g_pts_vec, g_vec, g_old_vec, g_old_old_vec
-  INTEGER,DIMENSION(:),ALLOCATABLE						:: nn0_vec, nnN_vec, nnE_vec, nnS_vec, nnW_vec
-  INTEGER,DIMENSION(:),ALLOCATABLE						:: os_x_vec, os_y_vec, os_vec, coefIndex_vec, md_vec
-  REAL(KIND=8) 											:: u, dis_h, dis_v, vel_h, vel_v, q, X_att, q_dot
-  REAL(KIND=8) 											:: X_att_dot, tilt_h, tilt_v, tilt_dot_h, tilt_dot_v
-  REAL(KIND=8) 											:: tilt, tilt_dot, X_tilt, X_tilt_dot, omega
-  REAL(KIND=8) 											:: r_b, sgn_u, mu_ref, epsil, epsil_dot, pi, L_X
-  REAL(KIND=8) 											:: L_Y, a, Delta_T, t_pts, pf, A_i, Pi_os
-  REAL(KIND=8) 											:: F_1, F_2, M_1, M_2
-  REAL(KIND=8) 											:: zero, q_squared, tilt_squared
-  REAL(KIND=8),DIMENSION(grooves)						:: X_os_vec
-  REAL(KIND=8),DIMENSION(n_x*n_y)						:: X_vec, Y_vec, Pi_pts_vec, cos_vec, sin_vec, H_vec
-  REAL(KIND=8),DIMENSION(n_x*n_y)						:: dHdT_vec, H3_vec, H3_over_mu_vec, Pi_vec
-  REAL(KIND=8),DIMENSION(n_x*n_y)						:: theta_vec, p_vec, A_vec
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE					:: aN_vec, aE_vec, aS_vec, aW_vec, coef_vec
+  INTEGER                                               :: n, dof_y, j_start, i, j, k, l, n_os_x, n_i
+  INTEGER                                               :: start_os, longgroove, end_os, n_os_y, n_nz
+  INTEGER                                               :: restore13, g_os, s1, s2
+  INTEGER,DIMENSION(grooves)                            :: start_os_vec, end_os_vec
+  INTEGER,DIMENSION(n_x*n_y)                            :: g_pts_vec, g_vec, g_old_vec, g_old_old_vec
+  INTEGER,DIMENSION(:),ALLOCATABLE                      :: nn0_vec, nnN_vec, nnE_vec, nnS_vec, nnW_vec
+  INTEGER,DIMENSION(:),ALLOCATABLE                      :: os_x_vec, os_y_vec, os_vec, coefIndex_vec, md_vec
+  REAL(KIND=8)                                          :: u, dis_h, dis_v, vel_h, vel_v, q, X_att, q_dot
+  REAL(KIND=8)                                          :: X_att_dot, tilt_h, tilt_v, tilt_dot_h, tilt_dot_v
+  REAL(KIND=8)                                          :: tilt, tilt_dot, X_tilt, X_tilt_dot, omega
+  REAL(KIND=8)                                          :: r_b, sgn_u, mu_ref, epsil, epsil_dot, pi, L_X
+  REAL(KIND=8)                                          :: L_Y, a, Delta_T, t_pts, pf, A_i, Pi_os
+  REAL(KIND=8)                                          :: F_1, F_2, M_1, M_2
+  REAL(KIND=8)                                          :: zero, q_squared, tilt_squared
+  REAL(KIND=8),DIMENSION(grooves)                       :: X_os_vec
+  REAL(KIND=8),DIMENSION(n_x*n_y)                       :: X_vec, Y_vec, Pi_pts_vec, cos_vec, sin_vec, H_vec
+  REAL(KIND=8),DIMENSION(n_x*n_y)                       :: dHdT_vec, H3_vec, H3_over_mu_vec, Pi_vec
+  REAL(KIND=8),DIMENSION(n_x*n_y)                       :: theta_vec, p_vec, A_vec
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE                 :: aN_vec, aE_vec, aS_vec, aW_vec, coef_vec
   
   
   ! --------------------------------------------------------------------------------------------------------
   ! Switch to reference frame of shell
   ! --------------------------------------------------------------------------------------------------------
   
-  dis_h = dis_h_shaft-dis_h_shell																			! horizontal displacement of the shaft relative to the shell, still in the reference frame of the inertial system
-  dis_v = dis_v_shaft-dis_v_shell																			! vertical displacement of the shaft relative to the shell, still in the reference frame of the inertial system
+  dis_h = dis_h_shaft-dis_h_shell                                                                           ! horizontal displacement of the shaft relative to the shell, still in the reference frame of the inertial system
+  dis_v = dis_v_shaft-dis_v_shell                                                                           ! vertical displacement of the shaft relative to the shell, still in the reference frame of the inertial system
   q_squared = dis_h**2+dis_v**2
   zero = EPSILON(q_squared)
   IF ( q_squared .LT. 5.0d0*zero ) THEN
     q_squared = 5.0d0*zero
     q = SQRT(q_squared)
-	dis_v = -q
-    dis_h = 0.0d0
+      dis_v = -q
+      dis_h = 0.0d0
   ELSE
-    q = SQRT(q_squared)																						! absolute eccentricity
+    q = SQRT(q_squared)                                                                                     ! absolute eccentricity
   END IF  
-  X_att = ATAN2(dis_v,dis_h)																				! attitude angle in the reference frame of the inertial system
-  X_att = X_att-angle_shell																					! attitude angle in the shell-fixed reference frame in which the Reynolds equation is solved
-  tilt_h = tilt_h_shaft-tilt_h_shell																		! tilting angle of the shaft relative to the shell around the horizontal axis, still in the reference frame of the inertial system
-  tilt_v = tilt_v_shaft-tilt_v_shell																		! tilting angle of the shaft relative to the shell around the vertical axis, still in the reference frame of the inertial system
+  X_att = ATAN2(dis_v,dis_h)                                                                                ! attitude angle in the reference frame of the inertial system
+  X_att = X_att-angle_shell                                                                                 ! attitude angle in the shell-fixed reference frame in which the Reynolds equation is solved
+  tilt_h = tilt_h_shaft-tilt_h_shell                                                                        ! tilting angle of the shaft relative to the shell around the horizontal axis, still in the reference frame of the inertial system
+  tilt_v = tilt_v_shaft-tilt_v_shell                                                                        ! tilting angle of the shaft relative to the shell around the vertical axis, still in the reference frame of the inertial system
   tilt_squared = tilt_h**2+tilt_v**2
   IF ( tilt_squared .LT. 5.0d0*zero ) THEN
     tilt_squared = 5.0d0*zero
     tilt = SQRT(tilt_squared)
-	tilt_v = -tilt
+    tilt_v = -tilt
     tilt_h = 0.0d0
   ELSE
     tilt = SQRT(tilt_squared)                                                                               ! absolute eccentricity
   END IF  
-  X_tilt = ATAN2(tilt_v,tilt_h)																				! angle describing the resulting tilting axis in the reference frame of the inertial system   
-  X_tilt = X_tilt-angle_shell																				! angle describing the tilting axis in the shell-fixed reference frame in which the Reynolds equation is solved
+  X_tilt = ATAN2(tilt_v,tilt_h)                                                                             ! angle describing the resulting tilting axis in the reference frame of the inertial system   
+  X_tilt = X_tilt-angle_shell                                                                               ! angle describing the tilting axis in the shell-fixed reference frame in which the Reynolds equation is solved
   IF ( quasistatic .EQ. 0 ) THEN
-	omega = omega_shaft-omega_shell																			! rotational velocity of the shaft relative to the shell
-	vel_h = vel_h_shaft-vel_h_shell																			! horizontal velocity of the shaft relative to the shell, still in the reference frame of the inertial system
-	vel_v = vel_v_shaft-vel_v_shell																			! vertical velocity of the shaft relative to the shell, still in the reference frame of the inertial system
-	q_dot = (vel_v*dis_v+vel_h*dis_h)/q                                                                     ! rate of change of absolute eccentricity
-	X_att_dot = (vel_v*dis_h-vel_h*dis_v)/q**2                                                              ! rate of change of attitude angle in the reference frame of the inertial system
+    omega = omega_shaft-omega_shell                                                                         ! rotational velocity of the shaft relative to the shell
+    vel_h = vel_h_shaft-vel_h_shell                                                                         ! horizontal velocity of the shaft relative to the shell, still in the reference frame of the inertial system
+    vel_v = vel_v_shaft-vel_v_shell	                                                                    ! vertical velocity of the shaft relative to the shell, still in the reference frame of the inertial system
+    q_dot = (vel_v*dis_v+vel_h*dis_h)/q                                                                     ! rate of change of absolute eccentricity
+    X_att_dot = (vel_v*dis_h-vel_h*dis_v)/q**2                                                              ! rate of change of attitude angle in the reference frame of the inertial system
     tilt_dot_h = tilt_dot_h_shaft-tilt_dot_h_shell                                                          ! rate of change of the tilting angle of the shaft relative to the shell around the horizontal axis, still in the reference frame of the inertial system
     tilt_dot_v = tilt_dot_v_shaft-tilt_dot_v_shell                                                          ! rate of change of the tilting angle of the shaft relative to the shell around the vertical axis, still in the reference frame of the inertial system
     tilt_dot = (tilt_dot_v*tilt_v+tilt_dot_h*tilt_h)/tilt                                                   ! rate of change of the absolute tilting angle
-    X_tilt_dot = (tilt_dot_v*tilt_h-tilt_dot_h*tilt_v)/tilt**2												! rate of change of the angle describing the resulting tilting axis in the reference frame of the inertial system
+    X_tilt_dot = (tilt_dot_v*tilt_h-tilt_dot_h*tilt_v)/tilt**2                                              ! rate of change of the angle describing the resulting tilting axis in the reference frame of the inertial system
     X_att_dot = X_att_dot-omega_shell                                                                       ! rate of change of attitude angle in the shell-fixed reference frame in which the Reynolds equation is solved
     X_tilt_dot = X_tilt_dot-omega_shell                                                                     ! rate of change of the angle describing the tilting axis in the shell-fixed reference frame in which the Reynolds equation is solved
   ELSE
-	omega = omega_shaft																						! quasistatic case: rotational velocity of shell is assumed to be zero
-	q_dot = 0																								! quasistatic case: rate of change of eccentricity is assumed to be zero
-	X_att_dot = 0																							! quasistatic case: rate of change of attitude angle is assumed to be zero
-    tilt_dot = 0																							! quasistatic case: rate of change of tilting angle is assumed to be zero
-    X_tilt_dot = 0																							! quasistatic case: rate of change of the angle describing the tilting axis is assumed to be zero
+    omega = omega_shaft                                                                                     ! quasistatic case: rotational velocity of shell is assumed to be zero
+    q_dot = 0                                                                                               ! quasistatic case: rate of change of eccentricity is assumed to be zero
+    X_att_dot = 0                                                                                           ! quasistatic case: rate of change of attitude angle is assumed to be zero
+    tilt_dot = 0                                                                                            ! quasistatic case: rate of change of tilting angle is assumed to be zero
+    X_tilt_dot = 0                                                                                          ! quasistatic case: rate of change of the angle describing the tilting axis is assumed to be zero
   END IF
-  u = omega*(d_b/2.0d0)																						! circumferential surface velocity of the shaft in the shell-fixed reference frame in which the Reynolds equation is solved (the surface velocity of the shell is zero in this reference frame) [m/s]
+  u = omega*(d_b/2.0d0)                                                                                     ! circumferential surface velocity of the shaft in the shell-fixed reference frame in which the Reynolds equation is solved (the surface velocity of the shell is zero in this reference frame) [m/s]
   
   
   ! --------------------------------------------------------------------------------------------------------
   ! Analyze grid
   ! --------------------------------------------------------------------------------------------------------
   
-  pi = 3.14159265359d0																						! define pi
-  r_b = d_b/2																								! bearing radius [m]
-  L_X = 2*pi/n_x																							! angular circumferential side length of control volume [rad]
-  L_Y = (l_b/(n_y-1))/r_b																					! nondimensionalized axial side length of control volume [-]
-  IF ( symBC .EQ. 0 ) THEN																					! if no symmetric BC is used
-	dof_y = n_y-2																							! number of DOFs in the axial direction (nummber of nodes without counting the nodes at the bearing boundaries)
-	j_start = 2																								! axial node number corresponding to the first DOF in the axial direction
-  ELSE 																										! if a symmetric BC is used
-	IF ( MODULO(n_y,2) .EQ. 0 ) THEN																		! if the node number is even (no node is located at the axial center of the bearing Y=0)
-	  dof_y = n_y/2-1																						! number of DOFs in the axial direction (one half of the bearing, not counting the node at the bearing boundary)
-	ELSE																									! if the node number is uneven (a node is located at the axial center of the bearing Y=0)
-	  dof_y = (n_y-1)/2																						! number of DOFs in the axial direction (one half of the bearing, not counting the node at the bearing boundary)
-	END IF
-	j_start = n_y-dof_y																						! axial node number corresponding to the first DOF in the axial direction
+  pi = 3.14159265359d0                                                                                      ! define pi
+  r_b = d_b/2                                                                                               ! bearing radius [m]
+  L_X = 2*pi/n_x                                                                                            ! angular circumferential side length of control volume [rad]
+  L_Y = (l_b/(n_y-1))/r_b                                                                                   ! nondimensionalized axial side length of control volume [-]
+  IF ( symBC .EQ. 0 ) THEN                                                                                  ! if no symmetric BC is used
+    dof_y = n_y-2                                                                                           ! number of DOFs in the axial direction (nummber of nodes without counting the nodes at the bearing boundaries)
+    j_start = 2                                                                                             ! axial node number corresponding to the first DOF in the axial direction
+  ELSE                                                                                                      ! if a symmetric BC is used
+    IF ( MODULO(n_y,2) .EQ. 0 ) THEN                                                                        ! if the node number is even (no node is located at the axial center of the bearing Y=0)
+      dof_y = n_y/2-1                                                                                       ! number of DOFs in the axial direction (one half of the bearing, not counting the node at the bearing boundary)
+    ELSE                                                                                                    ! if the node number is uneven (a node is located at the axial center of the bearing Y=0)
+      dof_y = (n_y-1)/2                                                                                     ! number of DOFs in the axial direction (one half of the bearing, not counting the node at the bearing boundary)
+    END IF
+    j_start = n_y-dof_y                                                                                     ! axial node number corresponding to the first DOF in the axial direction
   END IF
-  n = n_x*n_y																								! total number of nodes (whole bearing, nodes with Dirichlet BCs are included) [-]
-  dof = dof_y*n_x																							! total number of DOFs, including the nodes with oil supply BCs (because the penalty method is used) but not the nodes at the bearing boundaries
-  n_nz = n_x*(5*(dof_y-2)+8)																				! number of nonzero matrix entries (or rather, number of stored matrix entries, in this case)
+  n = n_x*n_y                                                                                               ! total number of nodes (whole bearing, nodes with Dirichlet BCs are included) [-]
+  dof = dof_y*n_x                                                                                           ! total number of DOFs, including the nodes with oil supply BCs (because the penalty method is used) but not the nodes at the bearing boundaries
+  n_nz = n_x*(5*(dof_y-2)+8)                                                                                ! number of nonzero matrix entries (or rather, number of stored matrix entries, in this case)
   IF ( guembel .EQ. 1 ) THEN
-	n_nz = (n_nz-dof)/2+dof																					! under Guembel conditions, the matrix is symmetric, meaning that fewer entries need to be stored
+    n_nz = (n_nz-dof)/2+dof                                                                                 ! under Guembel conditions, the matrix is symmetric, meaning that fewer entries need to be stored
   END IF
   
   
@@ -179,47 +179,47 @@ SUBROUTINE FVM_ELROD(d_b, l_b, c, grooves, X_os, L_X_os, l_y_os, p_os, ac_vec, t
   ! Settings for the BiCGStab solver
   ! --------------------------------------------------------------------------------------------------------
   
-  tol_fil = 1.0d-4																							! fill-in threshold (smaller values are ignored) for ilu
-  lfil = 5																									! max allowed number of fill-ins per row in ilu
+  tol_fil = 1.0d-4                                                                                          ! fill-in threshold (smaller values are ignored) for ilu
+  lfil = 5                                                                                                  ! max allowed number of fill-ins per row in ilu
   lws = 8*dof                                                                                               ! size of workspace array
   liws = 2*dof                                                                                              ! size of integer workspace array
   ipar_vec = 0
-  ipar_vec(2) = 1																							! status of the preconditioning: (0,1,2,3) == ( no prec., left prec. only, right prec. only, both prec.)
-  ipar_vec(3) = 2	                                                                                        ! use residual-based convergence criterion: || residual || <= rtol * || rhs || + atol
+  ipar_vec(2) = 1                                                                                           ! status of the preconditioning: (0,1,2,3) == ( no prec., left prec. only, right prec. only, both prec.)
+  ipar_vec(3) = 2                                                                                           ! use residual-based convergence criterion: || residual || <= rtol * || rhs || + atol
   ipar_vec(4) = lws                                                                                         ! size of workspace array
   ipar_vec(6) = iter_max_solver                                                                             ! maximum number of matrix-vector multiplications
   fpar_vec = 0.0d0
   fpar_vec(1) = tol                                                                                         ! relative tolerance
   fpar_vec(2) = 0.0d0                                                                                       ! absolute tolerance (if we set this to zero, a pure relative tolerance will be used))
-  nnz_ilu = n_nz + 2*dof*lfil																				! upper estimate of the overall number of nonzeros after fill-in 
+  nnz_ilu = n_nz + 2*dof*lfil                                                                               ! upper estimate of the overall number of nonzeros after fill-in 
       
   
   ! --------------------------------------------------------------------------------------------------------
   ! Some allocations
   ! --------------------------------------------------------------------------------------------------------
   
-  ALLOCATE(nn0_vec(dof))																					! this array will later contain the numbers of the nodes that are DOFs
-  ALLOCATE(nnN_vec(dof))																					! for every DOF, this array will contain the number of the neighboring node N in the positive Y-direction
-  ALLOCATE(nnE_vec(dof))																					! for every DOF, this array will contain the number of the neighboring node E in the positive X-direction
-  ALLOCATE(nnS_vec(dof))																					! for every DOF, this array will contain the number of the neighboring node S in the negative Y-direction
-  ALLOCATE(nnW_vec(dof))																					! for every DOF, this array will contain the number of the neighboring node W in the negative X-direction
-  ALLOCATE(aN_vec(dof))																						! array for storing the dimensionless conductivities in the positive Y-direction (interaction with DOF N) for every DOF
-  ALLOCATE(aE_vec(dof))																						! array for storing the dimensionless conductivities in the positive X-direction (interaction with DOF E) for every DOF
-  ALLOCATE(aS_vec(dof))																						! array for storing the dimensionless conductivities in the negative Y-direction (interaction with DOF S) for every DOF
-  ALLOCATE(aW_vec(dof))																						! array for storing the dimensionless conductivities in the negative X-direction (interaction with DOF W) for every DOF
-  ALLOCATE(coef_vec(5*dof))																					! array for storing all matrix entries (before they are ordered accoring to the csr format)
-  ALLOCATE(coefIndex_vec(n_nz))																				! this array will be used to organize the order in which the matrix entries are stored in values_vec (i.e. how their order is changed when they are copied from coef_vec to values_vec) to satisfy the csr format
-  ALLOCATE(values_vec(n_nz))																				! array for storing all matrix entries
-  ALLOCATE(columns_vec(n_nz))																				! array for storing the columns of all matrix entries
+  ALLOCATE(nn0_vec(dof))                                                                                    ! this array will later contain the numbers of the nodes that are DOFs
+  ALLOCATE(nnN_vec(dof))                                                                                    ! for every DOF, this array will contain the number of the neighboring node N in the positive Y-direction
+  ALLOCATE(nnE_vec(dof))                                                                                    ! for every DOF, this array will contain the number of the neighboring node E in the positive X-direction
+  ALLOCATE(nnS_vec(dof))                                                                                    ! for every DOF, this array will contain the number of the neighboring node S in the negative Y-direction
+  ALLOCATE(nnW_vec(dof))                                                                                    ! for every DOF, this array will contain the number of the neighboring node W in the negative X-direction
+  ALLOCATE(aN_vec(dof))                                                                                     ! array for storing the dimensionless conductivities in the positive Y-direction (interaction with DOF N) for every DOF
+  ALLOCATE(aE_vec(dof))                                                                                     ! array for storing the dimensionless conductivities in the positive X-direction (interaction with DOF E) for every DOF
+  ALLOCATE(aS_vec(dof))                                                                                     ! array for storing the dimensionless conductivities in the negative Y-direction (interaction with DOF S) for every DOF
+  ALLOCATE(aW_vec(dof))                                                                                     ! array for storing the dimensionless conductivities in the negative X-direction (interaction with DOF W) for every DOF
+  ALLOCATE(coef_vec(5*dof))                                                                                 ! array for storing all matrix entries (before they are ordered accoring to the csr format)
+  ALLOCATE(coefIndex_vec(n_nz))                                                                             ! this array will be used to organize the order in which the matrix entries are stored in values_vec (i.e. how their order is changed when they are copied from coef_vec to values_vec) to satisfy the csr format
+  ALLOCATE(values_vec(n_nz))                                                                                ! array for storing all matrix entries
+  ALLOCATE(columns_vec(n_nz))                                                                               ! array for storing the columns of all matrix entries
   ALLOCATE(rowIndex_vec(dof+1))                                                                             ! array for storing the indices of values_vec corresponding to the matrix entries that appear first in their respective matrix rows
-  ALLOCATE(md_vec(dof))																						! array for storing the indices of values_vec corresponding to the main diagonal entries (we will need this for the oil supply BCs)
-  ALLOCATE(R_vec(dof))																						! array for storing the RHS vector
+  ALLOCATE(md_vec(dof))                                                                                     ! array for storing the indices of values_vec corresponding to the main diagonal entries (we will need this for the oil supply BCs)
+  ALLOCATE(R_vec(dof))                                                                                      ! array for storing the RHS vector
   ALLOCATE(initial_guess_vec(dof))                                                                          ! array for storing the initial guess for the iterative solver
-  ALLOCATE(Pi_dof_vec(dof))																					! array for storing the solution vector (pressure-like function at the DOFs)
-  ALLOCATE(a_lu_vec(nnz_ilu))																				! for ILU preconditioner
-  ALLOCATE(j_lu_vec(nnz_ilu))																				! for ILU preconditioner
-  ALLOCATE(j_u_vec(dof))																					! for ILU preconditioner
-  ALLOCATE(ws_vec(lws))																						! workspace array for solver and ILU
+  ALLOCATE(Pi_dof_vec(dof))                                                                                 ! array for storing the solution vector (pressure-like function at the DOFs)
+  ALLOCATE(a_lu_vec(nnz_ilu))                                                                               ! for ILU preconditioner
+  ALLOCATE(j_lu_vec(nnz_ilu))                                                                               ! for ILU preconditioner
+  ALLOCATE(j_u_vec(dof))                                                                                    ! for ILU preconditioner
+  ALLOCATE(ws_vec(lws))                                                                                     ! workspace array for solver and ILU
   ALLOCATE(iws_vec(liws))                                                                                   ! workspace array for ILU
   
   
