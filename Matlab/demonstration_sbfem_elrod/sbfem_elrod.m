@@ -402,12 +402,12 @@ nodes_dof_vec = nonzeros(nodes_dof_vec);                                   % vec
 % ----------------------------------------------------------------------- %
 
 
-if p_os >= 0               												   % "IF a non-negative supply pressure is prescribed, then ..."
-	Pi_os = p_os/p_ref;													   % nondimensionalize the supply pressure and save as pressure-like function
-	g_os = 1;															   % set corresponding switch function to 1
-else																	   % otherwise, the prescribed value p_os will be interpreted as a film fraction with an offset of -1, i.e., as a negative pressure-like function
-    Pi_os = p_os;														   % save prescribed value as pressure-like function
-    g_os = 0;															   % set corresponding switch function to 0
+if p_os >= 0                                                               % "IF a non-negative supply pressure is prescribed, then ..."
+	Pi_os = p_os/p_ref;                                                % nondimensionalize the supply pressure and save as pressure-like function
+	g_os = 1;                                                          % set corresponding switch function to 1
+else                                                                       % otherwise, the prescribed value p_os will be interpreted as a film fraction with an offset of -1, i.e., as a negative pressure-like function
+    Pi_os = p_os;                                                          % save prescribed value as pressure-like function
+    g_os = 0;                                                              % set corresponding switch function to 0
 end
 
 if ( guembel == 1 && p_os < 0 ) || grooves == 0                            % if Guembel is used instead of Elrod, we cannot prescribe a film fraction as BC (which would be done via a negative p_os), so p_os represents a pressure and can't be negative; moreover, we set p_os to zero in case no oil supply is modeled (as one out of several steps necessary to bypass this BC)
