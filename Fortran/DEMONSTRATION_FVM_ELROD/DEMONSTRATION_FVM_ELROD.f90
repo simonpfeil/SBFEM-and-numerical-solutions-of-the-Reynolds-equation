@@ -105,18 +105,18 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   IMPLICIT NONE
   
   ! input variables for FVM_ELROD: bearing properties, kinematic variables, discretization, ...
-  REAL(KIND=8) 									:: d_b, l_b
-  INTEGER                                                                       :: n_x, n_y, grooves, iter_max_solver, quasistatic
-  INTEGER                                                                       :: iter_max, symBC, guembel
-  REAL(KIND=8) 									:: c, X_os, L_X_os, l_y_os, p_os, t, pm, tol
-  REAL(KIND=8) 									:: angle_shell, omega_shell, omega_shaft
-  REAL(KIND=8) 									:: dis_h_shell, dis_v_shell, vel_h_shell
-  REAL(KIND=8) 									:: vel_v_shell, dis_h_shaft, dis_v_shaft
-  REAL(KIND=8) 									:: vel_h_shaft, vel_v_shaft
-  REAL(KIND=8) 									:: tilt_h_shell, tilt_v_shell, tilt_dot_h_shell
-  REAL(KIND=8) 									:: tilt_dot_v_shell, tilt_h_shaft, tilt_v_shaft
-  REAL(KIND=8) 									:: tilt_dot_h_shaft, tilt_dot_v_shaft
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE			:: mu_vec, ac_vec  
+  REAL(KIND=8)									:: d_b, l_b
+  INTEGER									:: n_x, n_y, grooves, iter_max_solver, quasistatic
+  INTEGER									:: iter_max, symBC, guembel
+  REAL(KIND=8)									:: c, X_os, L_X_os, l_y_os, p_os, t, pm, tol
+  REAL(KIND=8)									:: angle_shell, omega_shell, omega_shaft
+  REAL(KIND=8)									:: dis_h_shell, dis_v_shell, vel_h_shell
+  REAL(KIND=8)									:: vel_v_shell, dis_h_shaft, dis_v_shaft
+  REAL(KIND=8)									:: vel_h_shaft, vel_v_shaft
+  REAL(KIND=8)									:: tilt_h_shell, tilt_v_shell, tilt_dot_h_shell
+  REAL(KIND=8)									:: tilt_dot_v_shell, tilt_h_shaft, tilt_v_shaft
+  REAL(KIND=8)									:: tilt_dot_h_shaft, tilt_dot_v_shaft
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE						:: mu_vec, ac_vec  
   
   ! output variables of FVM_ELROD, e.g., simulation results
   INTEGER										:: convergent, iter, iter_sol
