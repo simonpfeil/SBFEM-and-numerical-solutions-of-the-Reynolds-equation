@@ -27,7 +27,7 @@
 !   Since this renders the problem nonlinear, the program FVM_ELROD may internally perform multiple 
 !   iterations. To handle the transient cavitation term in the Reynolds equation, the program needs to 
 !   transfer data to itself across time steps, for which it uses the input/output variable pts_vec.
-!   Optionally, the cavitation model can be bypassed, meaning that Guembel conditions are assumed instead.
+!    Optionally, the cavitation model can be bypassed, meaning that Guembel conditions are assumed instead.
 !
 ! - The input and output variables of FVM_ELROD will all be clarified throughout the script at hand.
 !
@@ -62,7 +62,7 @@
 !       incomplete Cholesky factorizations. ACM Transactions on Mathematical Software, vol. 21,
 !       no. 1, March 1995, p. 18-19. Association for Computing Machinery, New York, NY, USA, 0098-3500,
 !       https://doi.org/10.1145/200979.200986
-!	Please follow the intructions given by the comments in the files MODULE_SPARSKIT2_BCGSTAB.f90 and
+!    Please follow the intructions given by the comments in the files MODULE_SPARSKIT2_BCGSTAB.f90 and
 !   MODULE_JPICC.f90. Note that it is also possible to modify the FVM algorithm to always use BiCGStab
 !   (as opposed to switching between BiCGStab and ICCG depending on the cavitation assumptions).
 !
@@ -105,32 +105,32 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   IMPLICIT NONE
   
   ! input variables for FVM_ELROD: bearing properties, kinematic variables, discretization, ...
-  REAL(KIND=8)                                  :: d_b, l_b
-  INTEGER                                       :: n_x, n_y, grooves, iter_max_solver, quasistatic
-  INTEGER                                       :: iter_max, symBC, guembel
-  REAL(KIND=8)                                  :: c, X_os, L_X_os, l_y_os, p_os, t, pm, tol
-  REAL(KIND=8)                                  :: angle_shell, omega_shell, omega_shaft
-  REAL(KIND=8)                                  :: dis_h_shell, dis_v_shell, vel_h_shell
-  REAL(KIND=8)                                  :: vel_v_shell, dis_h_shaft, dis_v_shaft
-  REAL(KIND=8)                                  :: vel_h_shaft, vel_v_shaft
-  REAL(KIND=8)                                  :: tilt_h_shell, tilt_v_shell, tilt_dot_h_shell
-  REAL(KIND=8)                                  :: tilt_dot_v_shell, tilt_h_shaft, tilt_v_shaft
-  REAL(KIND=8)                                  :: tilt_dot_h_shaft, tilt_dot_v_shaft
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE         :: mu_vec, ac_vec  
+  REAL(KIND=8)                                     :: d_b, l_b
+  INTEGER                                          :: n_x, n_y, grooves, iter_max_solver, quasistatic
+  INTEGER                                          :: iter_max, symBC, guembel
+  REAL(KIND=8)                                     :: c, X_os, L_X_os, l_y_os, p_os, t, pm, tol
+  REAL(KIND=8)                                     :: angle_shell, omega_shell, omega_shaft
+  REAL(KIND=8)                                     :: dis_h_shell, dis_v_shell, vel_h_shell
+  REAL(KIND=8)                                     :: vel_v_shell, dis_h_shaft, dis_v_shaft
+  REAL(KIND=8)                                     :: vel_h_shaft, vel_v_shaft
+  REAL(KIND=8)                                     :: tilt_h_shell, tilt_v_shell, tilt_dot_h_shell
+  REAL(KIND=8)                                     :: tilt_dot_v_shell, tilt_h_shaft, tilt_v_shaft
+  REAL(KIND=8)                                     :: tilt_dot_h_shaft, tilt_dot_v_shaft
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE            :: mu_vec, ac_vec  
   
   ! output variables of FVM_ELROD, e.g., simulation results
-  INTEGER                                       :: convergent, iter, iter_sol
-  REAL(KIND=8)                                  :: F_h, F_v, M_h, M_v, M_fr, V_oil, V_dot_bb, p_ref
-  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE       :: Pi_mat
+  INTEGER                                          :: convergent, iter, iter_sol
+  REAL(KIND=8)                                     :: F_h, F_v, M_h, M_v, M_fr, V_oil, V_dot_bb, p_ref
+  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE          :: Pi_mat
   
   ! input/output variable used by the program FVM_ELROD to communicate with itself accross time steps
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE         :: pts_vec
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE            :: pts_vec
   
   ! variables not required for using FVM_ELROD (only required by the example script at hand)
-  INTEGER                                       :: i
-  REAL(KIND=8)                                  :: pi
-  INTEGER,DIMENSION(:,:),ALLOCATABLE            :: g_mat
-  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE       :: theta_mat, p_mat
+  INTEGER                                          :: i
+  REAL(KIND=8)                                     :: pi
+  INTEGER,DIMENSION(:,:),ALLOCATABLE               :: g_mat
+  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE          :: theta_mat, p_mat
   
   
   ! --------------------------------------------------------------------------------------------------------
@@ -176,8 +176,8 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   ! (the computed pressure-like function) in a form that can be used to create surface plots. The 
   ! arrays mu_vec and ac_vec assume the node numbering scheme illustrated above.
   
-  ALLOCATE(mu_vec(n_x*n_y))																					
-  ALLOCATE(ac_vec(n_x*n_y))																					
+  ALLOCATE(mu_vec(n_x*n_y))                                                                                    
+  ALLOCATE(ac_vec(n_x*n_y))                                                                                    
   ALLOCATE(Pi_mat(n_x,n_y))
   
   ! Now, let's define some parameters and call the FVM algorithm for solving the Reynolds equation
@@ -201,14 +201,14 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   dis_v_shaft = 0.0d0                                                                                       ! vertical displacement of the shaft in the reference frame of the inertial system [m]
   vel_h_shaft = 0.0d0                                                                                       ! horizontal velocity of the shaft in the reference frame of the inertial system [m/s]
   vel_v_shaft = 0.0d0                                                                                       ! vertical velocity of the shaft in the reference frame of the inertial system [m/s]
-  tilt_h_shell = 0.0d0                                                                                      ! tilting angle of the shell around the horizontal axis of the inertial system [rad]
-  tilt_v_shell = 0.0d0                                                                                      ! tilting angle of the shell around the vertical axis of the inertial system [rad]
-  tilt_dot_h_shell = 0.0d0                                                                                  ! rate of change of the tilting angle of the shell around the horizontal axis of the inertial system [rad/s]
-  tilt_dot_v_shell = 0.0d0                                                                                  ! rate of change of the tilting angle of the shell around the vertical axis of the inertial system [rad/s]
-  tilt_h_shaft = 0.0d0                                                                                      ! tilting angle of shaft about horizontal axis [rad]
-  tilt_v_shaft = 0.0d0                                                                                      ! tilting angle of shaft about vertical axis [rad]
-  tilt_dot_h_shaft = 0.0d0                                                                                  ! rate of change of tilting angle of shaft about horizontal axis [rad/s]
-  tilt_dot_v_shaft = 0.0d0                                                                                  ! rate of change of tilting angle of shaft about vertical axis [rad/s]
+  tilt_h_shell = 0.0d0                                                                                      ! tilting angle of shell around horizontal axis [rad]
+  tilt_v_shell = 0.0d0                                                                                      ! tilting angle of shell around vertical axis [rad]
+  tilt_dot_h_shell = 0.0d0                                                                                  ! rate of change of tilting angle of shell around horizontal axis [rad/s]
+  tilt_dot_v_shell = 0.0d0                                                                                  ! rate of change of tilting angle of shell around vertical axis [rad/s]
+  tilt_h_shaft = 0.0d0                                                                                      ! tilting angle of shaft around horizontal axis [rad]
+  tilt_v_shaft = 0.0d0                                                                                      ! tilting angle of shaft around vertical axis [rad]
+  tilt_dot_h_shaft = 0.0d0                                                                                  ! rate of change of tilting angle of shaft around horizontal axis [rad/s]
+  tilt_dot_v_shaft = 0.0d0                                                                                  ! rate of change of tilting angle of shaft around vertical axis [rad/s]
   iter_max = n_x                                                                                            ! max. allowed number of iterations [-]
   ac_vec = 0.0d0                                                                                            ! additional contour of the shell defined at the nodes, following the node numbering scheme illustrated above; positive values increase the gap width, negative values reduce the gap width, the shell is cylindrical if all entries are zero; since the nodes are fixed at the reference frame of the shell, a rotation of the shell does not require any adjustment of ac_vec [m] 
   mu_vec = 0.01d0                                                                                           ! oil viscosities prescribed at the nodes, following the node numbering scheme illustrated above; since the nodes are fixed at the possibly rotating shell, this viscosity distribution is always expressed in the shell's reference frame [Pa*s]
@@ -260,10 +260,10 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   OPEN (UNIT = 4, FILE = "results2D_Pi.txt", RECL=(n_y*24))                                                 ! for 2D distribution of the pressure-like function: Pi
   OPEN (UNIT = 5, FILE = "results2D_p.txt", RECL=(n_y*24))                                                  ! for 2D distribution of the pressure: p
   DO i = 1, n_x
-	WRITE(2,*) g_mat(i,:)
-	WRITE(3,*) theta_mat(i,:)
-	WRITE(4,*) Pi_mat(i,:)
-	WRITE(5,*) p_mat(i,:)
+    WRITE(2,*) g_mat(i,:)
+    WRITE(3,*) theta_mat(i,:)
+    WRITE(4,*) Pi_mat(i,:)
+    WRITE(5,*) p_mat(i,:)
   END DO
   CLOSE(2)
   CLOSE(3)
