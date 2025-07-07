@@ -22,54 +22,54 @@ PROGRAM DEMONSTRATION_SBFEM_ELROD
   IMPLICIT NONE
   
   ! input variables for SBFEM_ELROD: bearing properties, kinematic variables, discretization, etc.
-  INTEGER										:: n_x, n_y, grooves, iter_max, quasistatic
-  INTEGER										:: guembel
-  REAL(KIND=8) 									:: d_b, l_b, c, X_os, L_X_os, p_os, t, angle_shell
-  REAL(KIND=8) 									:: omega_shell, dis_h_shell, dis_v_shell, vel_h_shell
-  REAL(KIND=8) 									:: vel_v_shell, omega_shaft, dis_h_shaft, dis_v_shaft
-  REAL(KIND=8) 									:: vel_h_shaft, vel_v_shaft
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE			:: ac_vec, mu_vec
+  INTEGER                                          :: n_x, n_y, grooves, iter_max, quasistatic
+  INTEGER                                          :: guembel
+  REAL(KIND=8)                                     :: d_b, l_b, c, X_os, L_X_os, p_os, t, angle_shell
+  REAL(KIND=8)                                     :: omega_shell, dis_h_shell, dis_v_shell, vel_h_shell
+  REAL(KIND=8)                                     :: vel_v_shell, omega_shaft, dis_h_shaft, dis_v_shaft
+  REAL(KIND=8)                                     :: vel_h_shaft, vel_v_shaft
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE            :: ac_vec, mu_vec
   
   ! more input variables for SBFEM_ELROD: data for Taylor approximations
-  INTEGER										:: tay, n_tay, n_Ld, red
-  REAL(KIND=8)                                  :: eps_constr, eps_max
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE			:: Ld_vec
-  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE       :: Vd_mat
+  INTEGER                                          :: tay, n_tay, n_Ld, red
+  REAL(KIND=8)                                     :: eps_constr, eps_max
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE            :: Ld_vec
+  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE          :: Vd_mat
   
   ! output variables of SBFEM_ELROD, e.g., simulation results
-  INTEGER										:: convergent, iter
-  INTEGER,DIMENSION(:),ALLOCATABLE				:: g_vec
-  REAL(KIND=8) 									:: F_h, F_v, M_fr, V_oil, V_dot_bb, p_ref
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE			:: theta_vec
-  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE		:: Pi_mat
+  INTEGER                                          :: convergent, iter
+  INTEGER,DIMENSION(:),ALLOCATABLE                 :: g_vec
+  REAL(KIND=8)                                     :: F_h, F_v, M_fr, V_oil, V_dot_bb, p_ref
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE            :: theta_vec
+  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE          :: Pi_mat
   
   ! input/output variable used by the program SBFEM_ELROD to communicate with itself accross time steps
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE			:: pts_vec
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE            :: pts_vec
   
   ! variables used by the code at hand but not by SBFEM_ELROD
-  INTEGER										:: i, n_points, n_Ld_all, ind
-  REAL(KIND=8)                                  :: pi, gamma_ref, epsil
-  REAL(KIND=8),DIMENSION(6)			            :: param_vec
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE			:: constr_vec, switch_vec, red_vec, ind_vec
-  REAL(KIND=8),DIMENSION(:),ALLOCATABLE         :: Ld_allpoints_vec
-  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE       :: Vd_allpoints_mat
+  INTEGER                                          :: i, n_points, n_Ld_all, ind
+  REAL(KIND=8)                                     :: pi, gamma_ref, epsil
+  REAL(KIND=8),DIMENSION(6)                        :: param_vec
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE            :: constr_vec, switch_vec, red_vec, ind_vec
+  REAL(KIND=8),DIMENSION(:),ALLOCATABLE            :: Ld_allpoints_vec
+  REAL(KIND=8),DIMENSION(:,:),ALLOCATABLE          :: Vd_allpoints_mat
   
   ! Let's first define the parameters that should stay constant throughout all calls of the Reynolds 
   ! equation within a time integration. Although we are not performing a time integration in the exemplary 
   ! code at hand, I prefer already making this distinction between the parameters here.
   
-  pi = 3.14159265359d0																						! define pi [-]
-  d_b = 0.1d0																								! bearing diameter [m]
-  l_b = 0.08d0																								! bearing length [m]
-  grooves = 1																								! number of oil supply grooves; the grooves are assumed to be distributed equidistantly along the circumference; at least 1 groove must be present under Elrod conditions (guembel = 0), and at least 0 grooves must be present under Guembel conditions (guembel = 1) [-]
-  X_os = 0.25d0*2.0d0*pi																					! angular circumferential position of one of the oil supply grooves in the reference frame of the shell [rad]
-  L_X_os = 15.0d0/360.0d0*2.0d0*pi																			! angular circumferential width of the oil supply groove(s) [rad]
-  quasistatic = 1																							! quasistatic = 1 means that a quasistatic simulation is requested (all velocities and angular velocities except for omega_shaft are internally set to zero and the film fraction is assumed to be constant over time); when incorporating the SBFEM solution into a time integration scheme, set quasistatic = 0 [-]
-  guembel = 0																								! use Guembel instead of Elrod cavitation? 0 = no (i.e. use Elrod), 1 = yes (i.e. use Guembel)
-  n_x = 100																									! circumferential number of nodes  (not counting the periodic node at X=2*pi) [-]
-  n_y = 26 ! 1																									! axial number of data points for evaluation of the solution on a twodimensional grid (purely for visualization purposes); set n_y=1 to skip this optional postprocessing step and save a lot of computational effort [-]  
-  iter_max = 100																							! max. allowed number of iterations [-]
-  tay = 0																									! use Taylor approximations for eigenvalues and eigenvectors? 0 = no, 1 = yes; these approximations are only possible if the additional contour ac_vec is zero, if the viscosity distribution mu_vec is spatially constant, and if n_x = 100, grooves = 0, and guembel = 1, which means that choosing tay = 1 will require us to align our parameters with these assumptions [-]
+  pi = 3.14159265359d0                                                                                      ! define pi [-]
+  d_b = 0.1d0                                                                                               ! bearing diameter [m]
+  l_b = 0.08d0                                                                                              ! bearing length [m]
+  grooves = 1                                                                                               ! number of oil supply grooves; the grooves are assumed to be distributed equidistantly along the circumference; at least 1 groove must be present under Elrod conditions (guembel = 0), and at least 0 grooves must be present under Guembel conditions (guembel = 1) [-]
+  X_os = 0.25d0*2.0d0*pi                                                                                    ! angular circumferential position of one of the oil supply grooves in the reference frame of the shell [rad]
+  L_X_os = 15.0d0/360.0d0*2.0d0*pi                                                                          ! angular circumferential width of the oil supply groove(s) [rad]
+  quasistatic = 1                                                                                           ! quasistatic = 1 means that a quasistatic simulation is requested (all velocities and angular velocities except for omega_shaft are internally set to zero and the film fraction is assumed to be constant over time); when incorporating the SBFEM solution into a time integration scheme, set quasistatic = 0 [-]
+  guembel = 0                                                                                               ! use Guembel instead of Elrod cavitation? 0 = no (i.e. use Elrod), 1 = yes (i.e. use Guembel)
+  n_x = 100                                                                                                 ! circumferential number of nodes  (not counting the periodic node at X=2*pi) [-]
+  n_y = 26 ! 1                                                                                              ! axial number of data points for evaluation of the solution on a twodimensional grid (purely for visualization purposes); set n_y=1 to skip this optional postprocessing step and save a lot of computational effort [-]  
+  iter_max = 100                                                                                            ! max. allowed number of iterations [-]
+  tay = 0                                                                                                   ! use Taylor approximations for eigenvalues and eigenvectors? 0 = no, 1 = yes; these approximations are only possible if the additional contour ac_vec is zero, if the viscosity distribution mu_vec is spatially constant, and if n_x = 100, grooves = 0, and guembel = 1, which means that choosing tay = 1 will require us to align our parameters with these assumptions [-]
   
   ! If we want the SBFEM algorithm to solve its eigenvalue problem by Taylor approximations (tay = 1) 
   ! instead of using an eigensolver, we need to load the database of Taylor coefficients. The Taylor 
@@ -134,22 +134,22 @@ PROGRAM DEMONSTRATION_SBFEM_ELROD
   ! If we were to perform a time integration, the time integration would start here. The variables
   ! defined in the following may vary between calls of the Reynolds equation.
   
-  ac_vec = 0.0d0																							! additional contour of the shell defined point-wise at the circumferential positions where the nodes are located; positive values increase the gap width, negative values reduce the gap width, the shell is cylindrical if all entries are zero; since the nodes are fixed at the reference frame of the shell, a rotation of the shell does not require any adjustment of ac_vec [m]
-  mu_vec = 0.01d0																							! oil viscosity distribution defined point-wise at the circumferential positions where the nodes are located; since the nodes are fixed at the reference frame of the possibly rotating shell, this viscosity distribution is always expressed in the shell's reference frame [Pa*s]
-  t = 0.0d0																									! time corresponding to the current time step (irrelevant for this quasistatic single call) [s]
-  c = 0.00015d0																								! radial clearance [m]
-  p_os = 70000.0d0																							! boundary value prescribed in the oil supply groove; either a non-negative pressure in [Pa] (zero corresponds to atmospheric pressure) or a negative value stating a film fraction minus 1 [-] (for example, a film fraction of 0.7 is prescribed by p_os = 0.7-1 = -0.3)
-  angle_shell = 0.0d0                                                      									! rotation angle of the shell in the reference frame of the inertial system [rad]
-  omega_shell = 0.0d0                                                      									! angular velocity of the shaft in the reference frame of the inertial system [rad/s] (omega_shaft must not be equal to omega_shell)
-  dis_h_shell = 0.0d0                                                      									! horizontal displacement of the shell in the reference frame of the inertial system [m]
-  dis_v_shell = 0.0d0                                                      									! vertical displacement of the shell in the reference frame of the inertial system [m]
-  vel_h_shell = 0.0d0                                                      									! horizontal velocity of the shell in the reference frame of the inertial system [m/s]
-  vel_v_shell = 0.0d0                                                      									! vertical velocity of the shell in the reference frame of the inertial system [m/s]
+  ac_vec = 0.0d0                                                                                            ! additional contour of the shell defined point-wise at the circumferential positions where the nodes are located; positive values increase the gap width, negative values reduce the gap width, the shell is cylindrical if all entries are zero; since the nodes are fixed at the reference frame of the shell, a rotation of the shell does not require any adjustment of ac_vec [m]
+  mu_vec = 0.01d0                                                                                           ! oil viscosity distribution defined point-wise at the circumferential positions where the nodes are located; since the nodes are fixed at the reference frame of the possibly rotating shell, this viscosity distribution is always expressed in the shell's reference frame [Pa*s]
+  t = 0.0d0                                                                                                 ! time corresponding to the current time step (irrelevant for this quasistatic single call) [s]
+  c = 0.00015d0                                                                                             ! radial clearance [m]
+  p_os = 70000.0d0                                                                                          ! boundary value prescribed in the oil supply groove; either a non-negative pressure in [Pa] (zero corresponds to atmospheric pressure) or a negative value stating a film fraction minus 1 [-] (for example, a film fraction of 0.7 is prescribed by p_os = 0.7-1 = -0.3)
+  angle_shell = 0.0d0                                                                                       ! rotation angle of the shell in the reference frame of the inertial system [rad]
+  omega_shell = 0.0d0                                                                                       ! angular velocity of the shaft in the reference frame of the inertial system [rad/s] (omega_shaft must not be equal to omega_shell)
+  dis_h_shell = 0.0d0                                                                                       ! horizontal displacement of the shell in the reference frame of the inertial system [m]
+  dis_v_shell = 0.0d0                                                                                       ! vertical displacement of the shell in the reference frame of the inertial system [m]
+  vel_h_shell = 0.0d0                                                                                       ! horizontal velocity of the shell in the reference frame of the inertial system [m/s]
+  vel_v_shell = 0.0d0                                                                                       ! vertical velocity of the shell in the reference frame of the inertial system [m/s]
   omega_shaft = (3000/60)*2*pi                                                                              ! angular velocity of the shaft in the reference frame of the inertial system [rad/s] (omega_shaft must not be equal to omega_shell)
-  dis_h_shaft = c/2                                                        									! horizontal displacement of the shaft in the reference frame of the inertial system [m]
-  dis_v_shaft = 0.0d0                                                      									! vertical displacement of the shaft in the reference frame of the inertial system [m]
-  vel_h_shaft = 0.0d0                                                      									! horizontal velocity of the shaft in the reference frame of the inertial system [m/s]
-  vel_v_shaft = 0.0d0                                                      									! vertical velocity of the shaft in the reference frame of the inertial system [m/s]
+  dis_h_shaft = c/2                                                                                         ! horizontal displacement of the shaft in the reference frame of the inertial system [m]
+  dis_v_shaft = 0.0d0                                                                                       ! vertical displacement of the shaft in the reference frame of the inertial system [m]
+  vel_h_shaft = 0.0d0                                                                                       ! horizontal velocity of the shaft in the reference frame of the inertial system [m/s]
+  vel_v_shaft = 0.0d0                                                                                       ! vertical velocity of the shaft in the reference frame of the inertial system [m/s]
   
   ! The next variable, pts_vec, requires special attention. In a time integration, the program SBFEM_ELROD 
   ! uses this array to communicate with itself across time steps. At every call, SBFEM_ELROD reads the data 
@@ -179,9 +179,9 @@ PROGRAM DEMONSTRATION_SBFEM_ELROD
   ! (this is also done in the following).
   
   IF ( tay .EQ. 1 ) THEN                                                                                    ! if Taylor approximations will be used for solving the eigenvalue problem
-    epsil = SQRT((dis_h_shaft-dis_h_shell)**2+(dis_v_shaft-dis_v_shell)**2)/c								! relative eccentricity
-    i = MINLOC(ABS(switch_vec-epsil),1)																		! switch_vec contains the epsilon-positions where we switch from one Taylor series to another; this command line determines which of these switching points our current epsilon is closest to
-    IF ( epsil .LT. switch_vec(i) ) THEN																	! depending on whether we are above or below this switching point, ...
+    epsil = SQRT((dis_h_shaft-dis_h_shell)**2+(dis_v_shaft-dis_v_shell)**2)/c                               ! relative eccentricity
+    i = MINLOC(ABS(switch_vec-epsil),1)                                                                     ! switch_vec contains the epsilon-positions where we switch from one Taylor series to another; this command line determines which of these switching points our current epsilon is closest to
+    IF ( epsil .LT. switch_vec(i) ) THEN                                                                    ! depending on whether we are above or below this switching point, ...
       i = i-1                                                                                               ! ... we choose the proper Taylor series (the i-th Taylor series in our database)
     END IF
     eps_constr = constr_vec(i)                                                                              ! point where Taylor series was constructed
@@ -205,8 +205,8 @@ PROGRAM DEMONSTRATION_SBFEM_ELROD
   ! We call the SBFEM algorithm to solve the Reynolds equation.
   
   CALL SBFEM_ELROD(grooves, n_x, iter_max, quasistatic, guembel, n_y, d_b, l_b, c, X_os, &
-	L_X_os, p_os, t, angle_shell, omega_shell, dis_h_shell, dis_v_shell, vel_h_shell, vel_v_shell, &
-	omega_shaft, dis_h_shaft, dis_v_shaft, vel_h_shaft, vel_v_shaft, ac_vec, mu_vec, tay, n_tay, &
+    L_X_os, p_os, t, angle_shell, omega_shell, dis_h_shell, dis_v_shell, vel_h_shell, vel_v_shell, &
+    omega_shaft, dis_h_shaft, dis_v_shaft, vel_h_shaft, vel_v_shaft, ac_vec, mu_vec, tay, n_tay, &
     n_Ld, red, eps_constr, eps_max, Ld_vec, Vd_mat, convergent, iter, M_fr, V_oil, V_dot_bb, p_ref, &
     F_h, F_v, g_vec, theta_vec, Pi_mat, pts_vec)
   
@@ -221,11 +221,11 @@ PROGRAM DEMONSTRATION_SBFEM_ELROD
   PRINT *, 'iterations = '
   PRINT *, iter
   PRINT *, 'hydrodynamic forces F_h and F_v (N) = '
-  PRINT *, (/F_h,F_v/)																						! hydrodynamic forces acting on the shell (and, in the opposite direction, on the shaft); check the attached PDF for clarification of the coordinate system 
+  PRINT *, (/F_h,F_v/)                                                                                      ! hydrodynamic forces acting on the shell (and, in the opposite direction, on the shaft); check the attached PDF for clarification of the coordinate system 
   PRINT *, 'hydrodynamic friction moment M_fr (Nm) = '
-  PRINT *, (/M_fr/) 																						! hydrodynamic friction moment acting on the shell (and, in the opposite direction, on the shaft); check the attached PDF for clarification of the coordinate system 
+  PRINT *, (/M_fr/)                                                                                         ! hydrodynamic friction moment acting on the shell (and, in the opposite direction, on the shaft); check the attached PDF for clarification of the coordinate system 
   PRINT *, 'oil volume (m^3) and flow through bearing boundaries (m^3/s) = '
-  PRINT *, (/V_oil,V_dot_bb/)																				! oil volume in the bearing (considering cavitation) and oil volume flow through the bearing boundaries (this volume flow should be negative, indicating that oil is leaving the bearing)
+  PRINT *, (/V_oil,V_dot_bb/)                                                                               ! oil volume in the bearing (considering cavitation) and oil volume flow through the bearing boundaries (this volume flow should be negative, indicating that oil is leaving the bearing)
   
   ! The variable n_y defines the number of data points in the axial direction for evaluating the pressure-
   ! like function Pi (a two-dimensional field) on a discrete grid and saving it to Pi_mat. I usually set
@@ -245,13 +245,13 @@ PROGRAM DEMONSTRATION_SBFEM_ELROD
     
   OPEN (UNIT = 2, FILE = "results1D_g.txt", RECL=(24))                                                      ! for 1D distribution of the the switch function
   OPEN (UNIT = 3, FILE = "results1D_theta.txt", RECL=(24))                                                  ! for 1D distribution of the film fraction
-  OPEN (UNIT = 4, FILE = "results2D_Pi.txt", RECL=(n_y*24))													! for 2D distribution of the pressure-like function
-  OPEN (UNIT = 5, FILE = "results2D_p.txt", RECL=(n_y*24))													! for 2D distribution of the pressure
+  OPEN (UNIT = 4, FILE = "results2D_Pi.txt", RECL=(n_y*24))                                                 ! for 2D distribution of the pressure-like function
+  OPEN (UNIT = 5, FILE = "results2D_p.txt", RECL=(n_y*24))                                                  ! for 2D distribution of the pressure
   DO i = 1, n_x
-	WRITE(2,*) g_vec(i)
-	WRITE(3,*) theta_vec(i)
-	WRITE(4,*) Pi_mat(i,:)
-	WRITE(5,*) Pi_mat(i,:)*(g_vec(i)*p_ref)
+    WRITE(2,*) g_vec(i)
+    WRITE(3,*) theta_vec(i)
+    WRITE(4,*) Pi_mat(i,:)
+    WRITE(5,*) Pi_mat(i,:)*(g_vec(i)*p_ref)
   END DO
   CLOSE(2)
   CLOSE(3)
