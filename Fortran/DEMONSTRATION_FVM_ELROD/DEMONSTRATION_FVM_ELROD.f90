@@ -139,16 +139,16 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   
   ! First things first, let's define pi.
   
-  pi = 3.14159265359d0																						! define pi [-]
+  pi = 3.14159265359d0                                                                                      ! define pi [-]
   
   ! Now, let's define the parameters that determine the number of DOFs. These will typically stay 
   ! constant throughout a sequence of calls of the Reynolds equation (for example, throughout a time 
   ! integration).
   
-  d_b = 0.1d0																								! bearing diameter [m]
-  l_b = 0.08d0																								! bearing length [m]
-  n_x = 100																									! circumferential number of nodes  (not counting the periodic node at X=2*pi) [-]
-  n_y = ANINT((l_b/(pi*d_b))*n_x+1)                                                                 		! axial number of nodes across the entire bearing length (including the nodes at the two bearing boundaries); we can set n_y = ANINT((l_b/(pi*d_b))*n_x+1) to ensure an equally fine discretization in both directions, but that requires l_b and d_b to be defined first [-]
+  d_b = 0.1d0                                                                                               ! bearing diameter [m]
+  l_b = 0.08d0                                                                                              ! bearing length [m]
+  n_x = 100                                                                                                 ! circumferential number of nodes  (not counting the periodic node at X=2*pi) [-]
+  n_y = ANINT((l_b/(pi*d_b))*n_x+1)                                                                         ! axial number of nodes across the entire bearing length (including the nodes at the two bearing boundaries); we can set n_y = ANINT((l_b/(pi*d_b))*n_x+1) to ensure an equally fine discretization in both directions, but that requires l_b and d_b to be defined first [-]
   symBC = 1                                                                                                 ! flag for the usage of a symmetric boundary condition: 0 = no, 1 = yes; setting symBC = 1 reduces the computational effort but also renders the model incapable of considering shaft tilting [-]
   
   ! As the total number of nodes (n_x*n_y) is known now, we can allocate pts_vec. In a time integration, 
@@ -183,40 +183,40 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   ! Now, let's define some parameters and call the FVM algorithm for solving the Reynolds equation
   ! (check the attached PDF for clarification of the kinematic variables).
   
-  c = 0.00015d0																								! radial clearance [m]
-  grooves = 1																								! number of oil supply grooves (evenly distributed across the circumference), under Elrod conditions, there must be at least 1 groove [-]
-  X_os = 0.25d0*2.0d0*pi																					! angular circumferential position of one of the oil supply grooves in the reference frame of the shell [rad]
-  L_X_os = 15.0d0/360.0d0*2.0d0*pi																			! angular circumferential side length of the oil supply groove(s) [rad]
-  l_y_os = 0.06d0																							! axial side length of the oil supply groove [m]
-  p_os = 70000.0d0																							! boundary value prescribed in the oil supply groove; either a non-negative pressure in [Pa] (zero corresponds to atmospheric pressure) or a negative value stating a film fraction minus 1 [-] (for example, a film fraction of 0.7 is prescribed by p_os = 0.7-1 = -0.3)
-  t = 0.0d0																									! time corresponding to the current time step (irrelevant for this quasistatic single call) [s]
-  angle_shell = 0.0d0                                                     									! rotation angle of the shell in the reference frame of the inertial system [rad]
-  omega_shell = 0.0d0                                                      									! angular velocity of the shaft in the reference frame of the inertial system [rad/s] (omega_shaft must not be equal to omega_shell)
-  dis_h_shell = 0.0d0                                                      									! horizontal displacement of the shell in the reference frame of the inertial system [m]
-  dis_v_shell = 0.0d0                                                      									! vertical displacement of the shell in the reference frame of the inertial system [m]
-  vel_h_shell = 0.0d0                                                      									! horizontal velocity of the shell in the reference frame of the inertial system [m/s]
-  vel_v_shell = 0.0d0                                                      									! vertical velocity of the shell in the reference frame of the inertial system [m/s]
+  c = 0.00015d0                                                                                             ! radial clearance [m]
+  grooves = 1                                                                                               ! number of oil supply grooves (evenly distributed across the circumference), under Elrod conditions, there must be at least 1 groove [-]
+  X_os = 0.25d0*2.0d0*pi                                                                                    ! angular circumferential position of one of the oil supply grooves in the reference frame of the shell [rad]
+  L_X_os = 15.0d0/360.0d0*2.0d0*pi                                                                          ! angular circumferential side length of the oil supply groove(s) [rad]
+  l_y_os = 0.06d0                                                                                           ! axial side length of the oil supply groove [m]
+  p_os = 70000.0d0                                                                                          ! boundary value prescribed in the oil supply groove; either a non-negative pressure in [Pa] (zero corresponds to atmospheric pressure) or a negative value stating a film fraction minus 1 [-] (for example, a film fraction of 0.7 is prescribed by p_os = 0.7-1 = -0.3)
+  t = 0.0d0                                                                                                 ! time corresponding to the current time step (irrelevant for this quasistatic single call) [s]
+  angle_shell = 0.0d0                                                                                       ! rotation angle of the shell in the reference frame of the inertial system [rad]
+  omega_shell = 0.0d0                                                                                       ! angular velocity of the shaft in the reference frame of the inertial system [rad/s] (omega_shaft must not be equal to omega_shell)
+  dis_h_shell = 0.0d0                                                                                       ! horizontal displacement of the shell in the reference frame of the inertial system [m]
+  dis_v_shell = 0.0d0                                                                                       ! vertical displacement of the shell in the reference frame of the inertial system [m]
+  vel_h_shell = 0.0d0                                                                                       ! horizontal velocity of the shell in the reference frame of the inertial system [m/s]
+  vel_v_shell = 0.0d0                                                                                       ! vertical velocity of the shell in the reference frame of the inertial system [m/s]
   omega_shaft = (3000/60)*2*pi                                                                              ! angular velocity of the shaft in the reference frame of the inertial system [rad/s] (omega_shaft must not be equal to omega_shell)
-  dis_h_shaft = c/2                                                        									! horizontal displacement of the shaft in the reference frame of the inertial system [m]
-  dis_v_shaft = 0.0d0                                                      									! vertical displacement of the shaft in the reference frame of the inertial system [m]
-  vel_h_shaft = 0.0d0                                                      									! horizontal velocity of the shaft in the reference frame of the inertial system [m/s]
-  vel_v_shaft = 0.0d0                                                      									! vertical velocity of the shaft in the reference frame of the inertial system [m/s]
-  tilt_h_shell = 0.0d0                                                										! tilting angle of the shell around the horizontal axis of the inertial system [rad]
-  tilt_v_shell = 0.0d0                                                										! tilting angle of the shell around the vertical axis of the inertial system [rad]
-  tilt_dot_h_shell = 0.0d0                                                									! rate of change of the tilting angle of the shell around the horizontal axis of the inertial system [rad/s]
-  tilt_dot_v_shell = 0.0d0                                                									! rate of change of the tilting angle of the shell around the vertical axis of the inertial system [rad/s]
-  tilt_h_shaft = 0.0d0                                                										! tilting angle of the shaft around the horizontal axis of the inertial system [rad]
-  tilt_v_shaft = 0.0d0                                               										! tilting angle of the shaft around the vertical axis of the inertial system [rad]
-  tilt_dot_h_shaft = 0.0d0                                                									! rate of change of the tilting angle of the shaft around the horizontal axis of the inertial system [rad/s]
-  tilt_dot_v_shaft = 0.0d0                                                									! rate of change of the tilting angle of the shaft around the vertical axis of the inertial system [rad/s]
-  iter_max = n_x																							! max. allowed number of iterations [-]
-  ac_vec = 0.0d0																							! additional contour of the shell defined at the nodes, following the node numbering scheme illustrated above; positive values increase the gap width, negative values reduce the gap width, the shell is cylindrical if all entries are zero; since the nodes are fixed at the reference frame of the shell, a rotation of the shell does not require any adjustment of ac_vec [m] 
-  mu_vec = 0.01d0																							! oil viscosities prescribed at the nodes, following the node numbering scheme illustrated above; since the nodes are fixed at the possibly rotating shell, this viscosity distribution is always expressed in the shell's reference frame [Pa*s]
-  quasistatic = 1																							! quasistatic = 1 means that a quasistatic simulation is requested (all time derivatives in the Reynolds equation are set to zero); when incorporating the SBFEM solution into a time integration scheme, set quasistatic = 0 [-]
-  tol = 1.0d-8																								! tolerance for BiCGStab (i.e. for iterative solution of equation system) [-]
-  iter_max_solver = 10000																					! maximum number of iterations for solution of system of equations (if an iterative solver is used) [-]
-  pm = 100.0d0																								! determines the penalty factor for the boundary conditions: pf=pm*max(diag(K)), where K is the system matrix [-]
-  guembel = 0																								! use Guembel instead of Elrod cavitation? 0 = no (i.e. use Elrod), 1 = yes (i.e. use Guembel)
+  dis_h_shaft = c/2                                                                                         ! horizontal displacement of the shaft in the reference frame of the inertial system [m]
+  dis_v_shaft = 0.0d0                                                                                       ! vertical displacement of the shaft in the reference frame of the inertial system [m]
+  vel_h_shaft = 0.0d0                                                                                       ! horizontal velocity of the shaft in the reference frame of the inertial system [m/s]
+  vel_v_shaft = 0.0d0                                                                                       ! vertical velocity of the shaft in the reference frame of the inertial system [m/s]
+  tilt_h_shell = 0.0d0                                                                                      ! tilting angle of the shell around the horizontal axis of the inertial system [rad]
+  tilt_v_shell = 0.0d0                                                                                      ! tilting angle of the shell around the vertical axis of the inertial system [rad]
+  tilt_dot_h_shell = 0.0d0                                                                                  ! rate of change of the tilting angle of the shell around the horizontal axis of the inertial system [rad/s]
+  tilt_dot_v_shell = 0.0d0                                                                                  ! rate of change of the tilting angle of the shell around the vertical axis of the inertial system [rad/s]
+  tilt_h_shaft = 0.0d0                                                                                      ! tilting angle of shaft about horizontal axis [rad]
+  tilt_v_shaft = 0.0d0                                                                                      ! tilting angle of shaft about vertical axis [rad]
+  tilt_dot_h_shaft = 0.0d0                                                                                  ! rate of change of tilting angle of shaft about horizontal axis [rad/s]
+  tilt_dot_v_shaft = 0.0d0                                                                                  ! rate of change of tilting angle of shaft about vertical axis [rad/s]
+  iter_max = n_x                                                                                            ! max. allowed number of iterations [-]
+  ac_vec = 0.0d0                                                                                            ! additional contour of the shell defined at the nodes, following the node numbering scheme illustrated above; positive values increase the gap width, negative values reduce the gap width, the shell is cylindrical if all entries are zero; since the nodes are fixed at the reference frame of the shell, a rotation of the shell does not require any adjustment of ac_vec [m] 
+  mu_vec = 0.01d0                                                                                           ! oil viscosities prescribed at the nodes, following the node numbering scheme illustrated above; since the nodes are fixed at the possibly rotating shell, this viscosity distribution is always expressed in the shell's reference frame [Pa*s]
+  quasistatic = 1                                                                                           ! quasistatic = 1 means that a quasistatic simulation is requested (all time derivatives in the Reynolds equation are set to zero); when incorporating the SBFEM solution into a time integration scheme, set quasistatic = 0 [-]
+  tol = 1.0d-8                                                                                              ! tolerance for BiCGStab (i.e. for iterative solution of equation system) [-]
+  iter_max_solver = 10000                                                                                   ! maximum number of iterations for solution of system of equations (if an iterative solver is used) [-]
+  pm = 100.0d0                                                                                              ! determines the penalty factor for the boundary conditions: pf=pm*max(diag(K)), where K is the system matrix [-]
+  guembel = 0                                                                                               ! use Guembel instead of Elrod cavitation? 0 = no (i.e. use Elrod), 1 = yes (i.e. use Guembel)
   
   CALL FVM_ELROD(d_b, l_b, c, grooves, X_os, L_X_os, l_y_os, p_os, ac_vec, t, angle_shell, &
     omega_shell, omega_shaft, dis_h_shell, dis_v_shell, vel_h_shell, vel_v_shell, dis_h_shaft, &
@@ -230,11 +230,11 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   PRINT *, 'iterations = '
   PRINT *, iter
   PRINT *, 'hydrodynamic forces F_h and F_v (N) = '
-  PRINT *, (/F_h,F_v/)																						! hydrodynamic forces acting on the shell (and, with opposite sign, on the shaft) in the horizontal and vertical directions of the inertial system; check the attached PDF for clarification of the directions
+  PRINT *, (/F_h,F_v/)                                                                                      ! hydrodynamic forces acting on the shell (and, with opposite sign, on the shaft) in the horizontal and vertical directions of the inertial system; check the attached PDF for clarification of the directions
   PRINT *, 'hydrodynamic moments M_h, M_v, and M_fr (Nm) = '
   PRINT *, (/M_h,M_v,M_fr/)                                                                                 ! hydrodynamic moments due to shaft tilting and hydrodynamic friction moment acting on the shell (and, with opposite sign, on the shaft); check the attached PDF for clarification of the directions
   PRINT *, 'oil volume (m^3) and flow through bearing boundaries (m^3/s) = '
-  PRINT *, (/V_oil,V_dot_bb/)																				! oil volume in the bearing (considering cavitation) and oil volume flow through the bearing boundaries (this volume flow should be negative, indicating that oil is leaving the bearing)
+  PRINT *, (/V_oil,V_dot_bb/)                                                                               ! oil volume in the bearing (considering cavitation) and oil volume flow through the bearing boundaries (this volume flow should be negative, indicating that oil is leaving the bearing)
   
   ! If we want to evaluate the nodal cavitation states, the nodal pressures, or the nodal film fractions
   ! accoring to the solution of the Reynolds equation that we performed, we can derive that information
@@ -257,8 +257,8 @@ PROGRAM DEMONSTRATION_FVM_ELROD
   p_mat = g_mat*Pi_mat*p_ref
   OPEN (UNIT = 2, FILE = "results2D_g.txt", RECL=(n_y*24))                                                  ! for 2D distribution of the the switch function: g
   OPEN (UNIT = 3, FILE = "results2D_theta.txt", RECL=(n_y*24))                                              ! for 2D distribution of the film fraction: theta
-  OPEN (UNIT = 4, FILE = "results2D_Pi.txt", RECL=(n_y*24))													! for 2D distribution of the pressure-like function: Pi
-  OPEN (UNIT = 5, FILE = "results2D_p.txt", RECL=(n_y*24))													! for 2D distribution of the pressure: p
+  OPEN (UNIT = 4, FILE = "results2D_Pi.txt", RECL=(n_y*24))                                                 ! for 2D distribution of the pressure-like function: Pi
+  OPEN (UNIT = 5, FILE = "results2D_p.txt", RECL=(n_y*24))                                                  ! for 2D distribution of the pressure: p
   DO i = 1, n_x
 	WRITE(2,*) g_mat(i,:)
 	WRITE(3,*) theta_mat(i,:)
