@@ -62,7 +62,7 @@
 !       incomplete Cholesky factorizations. ACM Transactions on Mathematical Software, vol. 21,
 !       no. 1, March 1995, p. 18-19. Association for Computing Machinery, New York, NY, USA, 0098-3500,
 !       https://doi.org/10.1145/200979.200986
-!    Please follow the intructions given by the comments in the files MODULE_SPARSKIT2_BCGSTAB.f90 and
+!   Please follow the intructions given by the comments in the files MODULE_SPARSKIT2_BCGSTAB.f90 and
 !   MODULE_JPICC.f90. Note that it is also possible to modify the FVM algorithm to always use BiCGStab
 !   (as opposed to switching between BiCGStab and ICCG depending on the cavitation assumptions).
 !
