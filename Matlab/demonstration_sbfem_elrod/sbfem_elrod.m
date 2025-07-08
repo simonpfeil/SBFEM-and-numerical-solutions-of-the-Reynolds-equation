@@ -298,7 +298,6 @@ else
 end
 X_att = atan2(dis_v,dis_h);                                                % attitude angle in the reference frame of the inertial system
 X_att = X_att-angle_shell;                                                 % attitude angle in the shell-fixed reference frame in which the Reynolds equation is solved
-
 if quasistatic == 0
     omega = omega_shaft-omega_shell;                                       % rotational velocity of the shaft relative to the shell
     vel_h = vel_h_shaft-vel_h_shell;                                       % horizontal velocity of the shaft relative to the shell, still in the reference frame of the inertial system
