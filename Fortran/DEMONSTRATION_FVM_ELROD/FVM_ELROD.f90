@@ -122,7 +122,7 @@ SUBROUTINE FVM_ELROD(d_b, l_b, c, grooves, X_os, L_X_os, l_y_os, p_os, ac_vec, t
     tilt_v = -tilt
     tilt_h = 0.0d0
   ELSE
-    tilt = SQRT(tilt_squared)                                                                               ! absolute eccentricity
+    tilt = SQRT(tilt_squared)                                                                               ! tilting angle
   END IF  
   X_tilt = ATAN2(tilt_v,tilt_h)                                                                             ! angle describing the resulting tilting axis in the reference frame of the inertial system   
   X_tilt = X_tilt-angle_shell                                                                               ! angle describing the tilting axis in the shell-fixed reference frame in which the Reynolds equation is solved
