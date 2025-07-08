@@ -286,7 +286,16 @@ function [F_h,F_v,M_fr,V_oil,V_dot_bb,pts_vec,g_vec,theta_vec,Pi_mat,...
 
 dis_h = dis_h_shaft-dis_h_shell;                                           % horizontal displacement of the shaft relative to the shell, still in the reference frame of the inertial system
 dis_v = dis_v_shaft-dis_v_shell;                                           % vertical displacement of the shaft relative to the shell, still in the reference frame of the inertial system
-q = max(sqrt(dis_h^2+dis_v^2),eps);                                        % absolute eccentricity
+q_squared = dis_h^2+dis_v^2;
+close2zero = 5*eps;
+if q_squared < close2zero
+    q_squared = close2zero;
+    q = sqrt(q_squared);                                                   % absolute eccentricity
+    dis_v = -q;
+    dis_h = 0;
+else
+    q = sqrt(q_squared);                                                   % absolute eccentricity
+end
 X_att = atan2(dis_v,dis_h);                                                % attitude angle in the reference frame of the inertial system
 X_att = X_att-angle_shell;                                                 % attitude angle in the shell-fixed reference frame in which the Reynolds equation is solved
 
