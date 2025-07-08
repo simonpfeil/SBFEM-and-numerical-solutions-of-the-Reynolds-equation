@@ -261,15 +261,31 @@ function [F_h,F_v,M_h,M_v,M_fr,V_oil,V_dot_bb,Pi_mat,pts_vec,p_ref,...
 
 dis_h = dis_h_shaft-dis_h_shell;                                           % horizontal displacement of the shaft relative to the shell, still in the reference frame of the inertial system
 dis_v = dis_v_shaft-dis_v_shell;                                           % vertical displacement of the shaft relative to the shell, still in the reference frame of the inertial system
-q = max(sqrt(dis_h^2+dis_v^2),eps);                                        % absolute eccentricity
+q_squared = dis_h^2+dis_v^2;
+close2zero = 5*eps;
+if q_squared < close2zero
+    q_squared = close2zero;
+    q = sqrt(q_squared);                                                   % absolute eccentricity
+    dis_v = -q;
+    dis_h = 0;
+else
+    q = sqrt(q_squared);                                                   % absolute eccentricity
+end
 X_att = atan2(dis_v,dis_h);                                                % attitude angle in the reference frame of the inertial system
+X_att = X_att-angle_shell;                                                 % attitude angle in the shell-fixed reference frame in which the Reynolds equation is solved
 
 tilt_h = tilt_h_shaft-tilt_h_shell;                                        % tilting angle of the shaft relative to the shell around the horizontal axis, still in the reference frame of the inertial system
 tilt_v = tilt_v_shaft-tilt_v_shell;                                        % tilting angle of the shaft relative to the shell around the vertical axis, still in the reference frame of the inertial system
-tilt = max(sqrt(tilt_h^2+tilt_v^2),eps);                                   % absolute tilting angle
+tilt_squared = tilt_h^2+tilt_v^2;
+if tilt_squared < close2zero
+    tilt_squared = close2zero;
+    tilt = sqrt(tilt_squared);                                             % tilting angle
+    tilt_v = -tilt;
+    tilt_h = 0;
+else
+    tilt = sqrt(tilt_squared);                                             % tilting angle
+end
 X_tilt = atan2(tilt_v,tilt_h);                                             % angle describing the resulting tilting axis in the reference frame of the inertial system
-
-X_att = X_att-angle_shell;                                                 % attitude angle in the shell-fixed reference frame in which the Reynolds equation is solved
 X_tilt = X_tilt-angle_shell;                                               % angle describing the tilting axis in the shell-fixed reference frame in which the Reynolds equation is solved
 
 if quasistatic == 0
